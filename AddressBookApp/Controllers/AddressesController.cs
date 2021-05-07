@@ -130,6 +130,22 @@ namespace AddressBookApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Search([Bind(Include = "Kana")] SearchViewModel model)
+        {
+            if (!string.IsNullOrEmpty(model.Kana))
+            {
+                var list = db.Addresses.Where(item => item.Kana.IndexOf(model.Kana) == 0).ToList();
+                model.Addresses = list;
+            }
+            else
+            {
+                model.Addresses = db.Addresses.ToList();
+            }
+
+            return View(model);
+
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
