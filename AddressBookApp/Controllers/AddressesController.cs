@@ -48,10 +48,11 @@ namespace AddressBookApp.Controllers
         // 詳細については、https://go.microsoft.com/fwlink/?LinkId=317598 をご覧ください。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Kana,ZipCode,Prefecture,StreetAddress,Telephone,Mail,Group_Id")] Address address)
+        public ActionResult Create([Bind(Include = "Id,Name,Kana,ZipCode,PrefectureItem,StreetAddress,Telephone,Mail,Group_Id")] Address address)
         {
             if (ModelState.IsValid)
             {
+                address.Prefecture = address.PrefectureItem.ToString();
                 db.Addresses.Add(address);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -73,6 +74,13 @@ namespace AddressBookApp.Controllers
             {
                 return HttpNotFound();
             }
+
+            Prefectures p;
+            if(Enum.TryParse(address.Prefecture, out p))
+            {
+                address.PrefectureItem = p;
+            }
+
             ViewBag.Group_Id = new SelectList(db.Groups, "Id", "Name", address.Group_Id);
             return View(address);
         }
@@ -82,10 +90,12 @@ namespace AddressBookApp.Controllers
         // 詳細については、https://go.microsoft.com/fwlink/?LinkId=317598 をご覧ください。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Kana,ZipCode,Prefecture,StreetAddress,Telephone,Mail,Group_Id")] Address address)
+        public ActionResult Edit([Bind(Include = "Id,Name,Kana,ZipCode,PrefectureItem,StreetAddress,Telephone,Mail,Group_Id")] Address address)
         {
             if (ModelState.IsValid)
             {
+                address.Prefecture = address.PrefectureItem.ToString();
+
                 db.Entry(address).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
